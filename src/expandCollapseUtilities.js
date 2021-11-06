@@ -784,6 +784,7 @@ return {
       result.oldEdges = result.oldEdges.add(edge);
       cy.remove(edge);
       result.edges = cy.add(edges);
+      console.log('Adding edges', edges.map(edge => `${edge.source().id()} - ${edge.target().id()}`))
       edge.trigger('expandcollapse.afterexpandedge');
     }
     return result;

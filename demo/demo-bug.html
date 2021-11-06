@@ -1,0 +1,183 @@
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1, maximum-scale=1">
+    <script src="https://unpkg.com/cytoscape/dist/cytoscape.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+
+    <!-- for testing with local version of cytoscape.js -->
+    <!--<script src="../cytoscape.js/build/cytoscape.js"></script>-->
+    <script src="https://unpkg.com/layout-base/layout-base.js"></script>
+    <script src="https://unpkg.com/cose-base/cose-base.js"></script>
+    <script src="https://unpkg.com/cytoscape-fcose/cytoscape-fcose.js"></script>
+    <script src="../cytoscape-expand-collapse.js"></script>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+
+        var cy = window.cy = cytoscape({
+          container: document.getElementById('cy'),
+          layout: {
+            name: 'fcose'
+          },
+          style: [
+            {
+              selector: 'node',
+              style: {
+                label: 'data(id)',
+                'background-color': '#ad1a66'
+              }
+            },
+            {
+              selector: ':parent',
+              style: {
+                'background-opacity': 0.333
+              }
+            },
+            {
+              selector: "node.cy-expand-collapse-collapsed-node",
+              style: {
+                "background-color": "darkblue",
+                "shape": "rectangle"
+              }
+            },
+            {
+              selector: 'edge',
+              style: {
+                'width': 3,
+                'line-color': '#ad1a66',
+                'curve-style': 'bezier',
+                'target-arrow-shape': 'triangle',
+              }
+            },
+            {
+              selector: 'edge.meta',
+              style: {
+                'width': 2,
+                'line-color': 'red'
+              }
+            },
+            {
+              selector: ':selected',
+              style: {
+                'overlay-color': "#6c757d",
+                'overlay-opacity': 0.3,
+                'background-color': "#999999"
+              }
+            }
+          ],
+          elements: [
+            {
+              "data": {"id": "a"},
+              "group": "nodes",
+            },
+            {
+              "data": {"id": "b"},
+              "group": "nodes",
+            },
+            {
+              "data": {
+                "id": "1",
+                "parent": "a"
+              },
+              "group": "nodes",
+            },
+            {
+              "data": {
+                "id": "2",
+                "parent": "b"
+              },
+              "group": "nodes",
+            },
+            {
+              "data": {
+                "id": "1-1",
+                "parent": "1"
+              },
+              "group": "nodes",
+            },
+            // EDGES
+            {
+              "data": {
+                "id": "e1",
+                "source": "1",
+                "target": "2"
+              },
+              "group": "edges",
+            },
+            {
+              "data": {
+                "id": "e2",
+                "source": "1",
+                "target": "2"
+              },
+              "group": "edges",
+            }
+          ]
+        });
+
+        var api = cy.expandCollapse({
+          layoutBy: {
+            name: "fcose",
+            animate: false,
+            randomize: false,
+            fit: false
+          },
+          fisheye: true,
+          animate: false,
+          undoable: false,
+          expandCueImage: "icon-plus.png",
+          collapseCueImage: "icon-minus.png"
+        });
+
+        //api.collapseAll();
+
+        document.getElementById("collapseRecursively").addEventListener("click", function () {
+          api.collapseRecursively(cy.$(":selected"));
+        });
+
+        document.getElementById("expandRecursively").addEventListener("click", function () {
+          api.expandRecursively(cy.$(":selected"));
+        });
+
+        document.getElementById("collapseAll").addEventListener("click", function () {
+          api.collapseAll();
+        });
+
+        document.getElementById("collapseEdges").addEventListener("click", function () {
+          api.collapseEdges(cy.edges());
+        });
+
+        document.getElementById("expandAllEdges").addEventListener("click", function () {
+          api.expandAllEdges();
+        });
+
+        document.getElementById("expandAll").addEventListener("click", function () {
+          api.expandAll();
+        });
+
+      });
+    </script>
+</head>
+<body>
+<h1>cytoscape-expand-collapse demo</h1>
+
+<div class="fleft">
+    <div class="menu-container">
+        <button id="collapseAll">Collapse all</button>
+        <br/>
+        <button id="expandAll">Expand all</button>
+        <br/>
+        <button id="collapseRecursively">Collapse selected recursively</button>
+        <br/>
+        <button id="expandRecursively">Expand selected recursively</button>
+        <br/>
+        <button id="collapseEdges">Collapse edges</button>
+        <br/>
+        <button id="expandAllEdges">Expand all edges</button>
+    </div>
+</div>
+
+<div class="fright" id="cy"></div>
+</body>
+</html>
