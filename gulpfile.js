@@ -62,7 +62,6 @@ function version(next) {
       var sha = stdout.substring(0, 10); // shorten so not huge filename
 
       version_number = ['snapshot', sha, +now].join('-');
-      process.env['VERSION'] = version_number;
       done();
     });
   }
